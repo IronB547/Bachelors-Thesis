@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class ClockManager : MonoBehaviour
 {
-    public static int MinCount;
-    public static int SecCount;
-    public static int MilliCount;
-    public static float HundredthsCount;
-    public static string HundredthsDisplay;
+    public int MinCount;
+    public int SecCount;
+    public int MilliCount;
+    public float HundredthsCount;
+    public string HundredthsDisplay;
 
     public TextMeshProUGUI MinBox;
     public TextMeshProUGUI SecBox;

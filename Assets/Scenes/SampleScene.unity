@@ -123,61 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &27734479
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 27734481}
-  - component: {fileID: 27734480}
-  m_Layer: 0
-  m_Name: LapTimeManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &27734480
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 27734479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d5ba832d3b1f8f46badd38f4f22d344, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Clock: {fileID: 2125924012}
-  StartTrigger: {fileID: 66491459}
-  FinishTrigger: {fileID: 1976027379}
-  LastLapMinBox: {fileID: 1091546344}
-  LastLapSecBox: {fileID: 1670506895}
-  LastLapMilliBox: {fileID: 2035996527}
-  LastLapHundredthsBox: {fileID: 1801821279}
-  BestTimeMinBox: {fileID: 1003527399}
-  BestTimeSecBox: {fileID: 1842763661}
-  BestTimeMilliBox: {fileID: 1173802770}
-  BestTimeHundredthsBox: {fileID: 398922971}
---- !u!4 &27734481
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 27734479}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -777.8, y: -340.5, z: 99.74917}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1026137214}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &66491459
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,20 +230,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 66491459}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d5ba832d3b1f8f46badd38f4f22d344, type: 3}
+  m_Script: {fileID: 11500000, guid: aa98f6f4dddbb9742b4c75062c7fc71f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Clock: {fileID: 2125924012}
   StartTrigger: {fileID: 66491459}
   FinishTrigger: {fileID: 1976027379}
-  LastLapMinBox: {fileID: 0}
-  LastLapSecBox: {fileID: 0}
-  LastLapMilliBox: {fileID: 0}
-  LastLapHundredthsBox: {fileID: 0}
-  BestTimeMinBox: {fileID: 0}
-  BestTimeSecBox: {fileID: 0}
-  BestTimeMilliBox: {fileID: 0}
-  BestTimeHundredthsBox: {fileID: 0}
 --- !u!1 &76502387
 GameObject:
   m_ObjectHideFlags: 0
@@ -1188,8 +1125,9 @@ GameObject:
   - component: {fileID: 973425009}
   - component: {fileID: 973425008}
   - component: {fileID: 973425007}
+  - component: {fileID: 973425011}
   m_Layer: 0
-  m_Name: HalPointTrigger
+  m_Name: HalfPointTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1266,13 +1204,28 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 973425005}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 734.7, y: -69.48181, z: 269}
+  m_LocalPosition: {x: 735.7, y: -69.48181, z: 306}
   m_LocalScale: {x: 1, y: 22.954016, z: 122.348}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 762107073}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &973425011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 973425005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa98f6f4dddbb9742b4c75062c7fc71f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Clock: {fileID: 2125924012}
+  StartTrigger: {fileID: 66491459}
+  FinishTrigger: {fileID: 1976027379}
 --- !u!1 &999569579
 GameObject:
   m_ObjectHideFlags: 0
@@ -1480,7 +1433,6 @@ RectTransform:
   - {fileID: 504857981}
   - {fileID: 999569580}
   - {fileID: 2125924014}
-  - {fileID: 27734481}
   m_Father: {fileID: 1295827723}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3763,6 +3715,8 @@ GameObject:
   - component: {fileID: 1976027382}
   - component: {fileID: 1976027381}
   - component: {fileID: 1976027380}
+  - component: {fileID: 1976027385}
+  - component: {fileID: 1976027384}
   m_Layer: 0
   m_Name: FinishTrigger
   m_TagString: Untagged
@@ -3848,6 +3802,45 @@ Transform:
   m_Father: {fileID: 762107073}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1976027384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976027379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa98f6f4dddbb9742b4c75062c7fc71f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Clock: {fileID: 2125924012}
+  StartTrigger: {fileID: 66491459}
+  FinishTrigger: {fileID: 1976027379}
+--- !u!114 &1976027385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976027379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d5ba832d3b1f8f46badd38f4f22d344, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Clock: {fileID: 2125924012}
+  FinishTrigger: {fileID: 1976027379}
+  BestTotalTime: 0
+  LastTotalTime: 0
+  LastLapMinBox: {fileID: 1091546344}
+  LastLapSecBox: {fileID: 1670506895}
+  LastLapMilliBox: {fileID: 2035996527}
+  LastLapHundredthsBox: {fileID: 1801821279}
+  BestTimeMinBox: {fileID: 1003527399}
+  BestTimeSecBox: {fileID: 1842763661}
+  BestTimeMilliBox: {fileID: 1173802770}
+  BestTimeHundredthsBox: {fileID: 398922971}
 --- !u!1 &2035996525
 GameObject:
   m_ObjectHideFlags: 0
@@ -4012,6 +4005,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e632e6b997b4db40a7ae02378f28d44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MinCount: 0
+  SecCount: 0
+  MilliCount: 0
+  HundredthsCount: 0
+  HundredthsDisplay: 
   MinBox: {fileID: 76502389}
   SecBox: {fileID: 1921173366}
   MilliBox: {fileID: 1300909462}
