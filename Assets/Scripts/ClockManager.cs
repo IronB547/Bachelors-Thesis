@@ -9,7 +9,6 @@ public class ClockManager : MonoBehaviour
     public int SecCount;
     public int MilliCount;
     public float HundredthsCount;
-    public string HundredthsDisplay;
 
     public TextMeshProUGUI MinBox;
     public TextMeshProUGUI SecBox;
@@ -20,14 +19,13 @@ public class ClockManager : MonoBehaviour
     void Update()
     {
         HundredthsCount += Time.deltaTime * 100;
-        HundredthsDisplay = HundredthsCount.ToString("F0");
 
         // Display Hundreths in UI if less than 9.5. The reason why 9.5 is the limit is because C# rounds up the value 
         // and it wouldn't be pretty with 10 in the UI display. It also has to be above the counting functions, because the delay from ifs
         // invalidates this check
         if (HundredthsCount < 9.5)
         {
-            HundredthsBox.text = "" + HundredthsDisplay;
+            HundredthsBox.text = "" + HundredthsCount.ToString("F0");
         }
 
         if (HundredthsCount >= 10)
