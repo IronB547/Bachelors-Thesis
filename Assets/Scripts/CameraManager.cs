@@ -30,27 +30,33 @@ public class CameraManager : MonoBehaviour
             {
                 case 0:
                     ThirdPersonCam.enabled = false;
+                    ThirdPersonCam.tag = "Untagged";
                     ThirdPersonCam.GetComponent<AudioListener>().enabled = false;
 
                     RoofCam.enabled = true;
+                    RoofCam.tag = "MainCamera";
                     RoofCam.GetComponent<AudioListener>().enabled = true;
                     switch_cam++;
                     break;
 
                 case 1:
                     RoofCam.enabled = false;
+                    RoofCam.tag = "Untagged";
                     RoofCam.GetComponent<AudioListener>().enabled = false;
 
                     FrontCam.enabled = true;
+                    FrontCam.tag = "MainCamera";
                     FrontCam.GetComponent<AudioListener>().enabled = true;
                     switch_cam++;
                     break;
 
                 case 2:
                     ThirdPersonCam.enabled = true;
+                    ThirdPersonCam.tag = "MainCamera";
                     ThirdPersonCam.GetComponent<AudioListener>().enabled = true;
 
                     FrontCam.enabled = false;
+                    FrontCam.tag = "Untagged";
                     FrontCam.GetComponent<AudioListener>().enabled = false;
                     switch_cam = 0;
                     break;
