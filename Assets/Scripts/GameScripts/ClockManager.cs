@@ -71,6 +71,5 @@ public class ClockManager : MonoBehaviour
             MinBox.text = "" + MinCount + ":";
         }
 
-
     }
 }
