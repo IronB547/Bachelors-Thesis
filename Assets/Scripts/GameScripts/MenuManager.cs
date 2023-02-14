@@ -14,6 +14,7 @@ public class MenuManager : MonoBehaviour
     public GameObject gameMenu;
     public GameObject formula;
     public TMP_Dropdown dropdown;
+    public TextMeshProUGUI speedNumber;
 
     // Handles pausing and 
     private void Awake()
@@ -96,6 +97,11 @@ public class MenuManager : MonoBehaviour
                 break;
         }
         
+    }
+
+    void FixedUpdate()
+    {
+        speedNumber.text = formula.GetComponent<Rigidbody>().velocity.magnitude.ToString("0.00");
     }
 
 }

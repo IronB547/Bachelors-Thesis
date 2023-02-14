@@ -18,6 +18,7 @@ public class CarController : MonoBehaviour
     public GameObject SteeringWheel;
     public float maxMotorTorque;
     public float maxSteeringAngle;
+    public float maxBreakTorque;
     private float maxTurnAngle = 45f;
     private float steerRotationDamp = 0.5f;
 
@@ -61,7 +62,7 @@ public class CarController : MonoBehaviour
                     WheelsCollider[1].motorTorque = motor * 1.3f;
                     WheelsCollider[2].motorTorque = motor * 1.3f;
 
-                break;
+                    break;
                 case CarDriveType.FrontWheelDrive:
                     for (int i = 0; i < 2; i++)
                     {
@@ -109,5 +110,21 @@ public class CarController : MonoBehaviour
         {
             SceneManager.LoadScene("TestTrack");
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            for (int i = 2; i < 4; i++)
+            {
+                WheelsCollider[i].brakeTorque = maxBreakTorque;
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            for (int i = 2; i < 4; i++)
+            {
+                WheelsCollider[i].brakeTorque = 0;
+            }
+        }
+
     }
 }
