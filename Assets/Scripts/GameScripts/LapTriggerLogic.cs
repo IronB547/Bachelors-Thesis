@@ -20,9 +20,9 @@ public class LapTriggerLogic : MonoBehaviour
         {
             Clock.SetActive(false);
             LapsLeft.text = laps.ToString("F0");
+            FinishTrigger.SetActive(false);
         }
 
-        FinishTrigger.SetActive(false);
     }
 
     void OnTriggerEnter(Collider collided)
@@ -31,11 +31,13 @@ public class LapTriggerLogic : MonoBehaviour
         if (gameObject.name == "StartTrigger")
         {
             Clock.SetActive(true);
-            StartTrigger.GetComponent<BoxCollider>().enabled = false;
+            StartTrigger.SetActive(false);
+            
         }
 
         if (gameObject.name == "HalfPointTrigger")
         {
+            Debug.Log("Hello I went through");
             FinishTrigger.SetActive(true);
         }
 
@@ -51,7 +53,7 @@ public class LapTriggerLogic : MonoBehaviour
             if (laps <= 0)
             {
                 Clock.GetComponent<ClockManager>().enabled = false;
-                collided.transform.parent.gameObject.transform.parent.GetComponent<CarUserControl>().enabled = false; // If a car has reached the finish line, terminate user control.
+                //collided.transform.parent.gameObject.transform.parent.GetComponent<CarUserControl>().enabled = false; // If a car has reached the finish line, terminate user control.
             }
         }
 

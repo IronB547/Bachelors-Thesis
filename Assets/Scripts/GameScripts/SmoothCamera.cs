@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SmoothCamera : MonoBehaviour
@@ -11,7 +12,7 @@ public class SmoothCamera : MonoBehaviour
     public Vector2 cameraVector;
     public Vector2 carVector;
 
-    public float smoothTime = 0.05f;
+    public float smoothTime = 0.1f;
     public float smoothSlerp = 0.15f;
 
     public AnimationCurve curve;
@@ -35,7 +36,7 @@ public class SmoothCamera : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        //Update the 
+        //Update the position of camera
         carVector.x = targetObject.forward.x;
         carVector.y = targetObject.forward.z;
 
@@ -50,7 +51,7 @@ public class SmoothCamera : MonoBehaviour
         // initialOffset.z is the radius of the circle
         // pos.x is the interpolated position of the camera (individual steps of the circle)
         // The -1 value is there to put the camera behind the car, not in front since
-        // there is no transform.backwards, (no real need even) to simply flip the vector.
+        // so this flips the vector.
 
         cameraPosition.x = targetObject.position.x + (initialOffset.z * pos.x * -1);
         cameraPosition.z = targetObject.position.z + (initialOffset.z * pos.y * -1);
@@ -60,9 +61,7 @@ public class SmoothCamera : MonoBehaviour
         //Rotation of the camera itself
         Quaternion cameraRotation = Quaternion.Euler(10, transform.rotation.eulerAngles.y, 0);
 
-        transform.rotation = Quaternion.Slerp(cameraRotation, targetObject.rotation, smoothSlerp);
-
-       
+        transform.rotation = Quaternion.Lerp(cameraRotation, targetObject.rotation, smoothSlerp);
 
     }
 }

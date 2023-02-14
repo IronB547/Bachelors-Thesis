@@ -44,12 +44,6 @@ public class SimpleCarControl : MonoBehaviour
         float motor = maxMotorTorque * Input.GetAxis("Vertical");
         float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
 
-        for (int i = 0; i < 4; i++)
-        {
-            Debug.Log(WheelsCollider[i].rpm);
-            WheelsObject[i].transform.Rotate(WheelsCollider[i].rpm / 60 * 360 * Time.deltaTime, 0.0f, 0.0f);
-        }
-
         foreach (AxleInfo axleInfo in axleInfos)
         {
             

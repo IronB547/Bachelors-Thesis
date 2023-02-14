@@ -8,8 +8,10 @@
 /[Bb]uild/
 /[Bb]uilds/
 /[Bb]lender/
+/[Gg]imp/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/COLMAP
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

@@ -4,25 +4,34 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    public Camera mainCam;
-    public Camera frontCam;
 
-    private Vector3 closeUpCamPos = new Vector3 (0, 0.6f, 6.0f);
+    private Vector3 closeUpCamPos = new Vector3 (0, 0.9f, 6.0f);
     private Vector3 mainCamPos = new Vector3(0, 1.65f, 9f);
 
-    private int switch_cam = 0;
+    private Vector3 frontCamPos = new Vector3(0, -0.2f, 0.6f);
+
+    public int switch_cam = 0;
+    public float elapsedTime;
 
     public AnimationCurve curve;
+    public Camera mainCam;
+    public Camera rearCam;
+    public Camera firstPersonCam;
 
-    private float elapsedTime;
+    private bool rearCamState;
+    private bool camSwitched;
 
     // Start is called before the first frame update
     void Start()
     {
         mainCam.enabled = true;
-        frontCam.enabled = false;
+        rearCamState = false;
+        rearCam.enabled = false;
+        firstPersonCam.enabled = false;
+        camSwitched = false;
 
-        frontCam.GetComponent<AudioListener>().enabled = false;
+        rearCam.GetComponent<AudioListener>().enabled = false;
+        firstPersonCam.GetComponent<AudioListener>().enabled = false;
     }
 
     // Update is called once per frame
@@ -30,12 +39,44 @@ public class CameraManager : MonoBehaviour
     {
         elapsedTime += Time.deltaTime;
 
+        // Smooth switching between camera positions
         if (switch_cam == 1)
             mainCam.GetComponent<SmoothCamera>().initialOffset = Vector3.Lerp(mainCamPos, closeUpCamPos, curve.Evaluate(elapsedTime));
 
         if (switch_cam == 2)
-            mainCam.GetComponent<SmoothCamera>().initialOffset = Vector3.Lerp(closeUpCamPos, mainCamPos, curve.Evaluate(elapsedTime));
+        {
+            mainCam.GetComponent<SmoothCamera>().initialOffset = Vector3.Lerp(closeUpCamPos, frontCamPos, curve.Evaluate(elapsedTime));
+            if (elapsedTime >= 0.8f && !camSwitched)
+            {
+                camSwitched = true;
+                mainCam.enabled = false;
+                firstPersonCam.enabled = true;
+            }
+        }
 
+
+        if (switch_cam == 3)
+        {
+            mainCam.enabled = true;
+            firstPersonCam.enabled = false;
+            mainCam.GetComponent<SmoothCamera>().initialOffset = Vector3.Lerp(frontCamPos, mainCamPos, curve.Evaluate(elapsedTime));
+            camSwitched = false;
+        }
+            
+
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            if (rearCamState == true)
+            {
+                rearCam.enabled = false;
+                rearCamState = false;
+            }
+            else
+            {
+                rearCam.enabled = true;
+                rearCamState = true;
+            }
+        }
 
         if (Input.GetKeyDown(KeyCode.F1))
         {
@@ -67,7 +108,11 @@ public class CameraManager : MonoBehaviour
                     switch_cam++;
                     break;
 
-                
+                case 2:
+                    elapsedTime = 0;
+                    switch_cam++;
+                    break;
+
                 default:
                     elapsedTime = 0;
                     switch_cam = 1;
