@@ -5,11 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class MenuButtons : MonoBehaviour
 {
-    public void PlayButton()
-    {
-        SceneManager.LoadScene(1);
-    }
+	public void PlayButton()
+	{
+		SceneManager.LoadScene(1);
+	}
 
-    // Other options can be selected like so
+	public void QuitButton()
+	{
+		Application.Quit();
+	}
+
+	// Other options can be selected like so
 
 }
