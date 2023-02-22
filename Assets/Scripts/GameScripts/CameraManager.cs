@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Net;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.PlayerSettings;
 
 public class CameraManager : MonoBehaviour
 {
@@ -10,23 +13,29 @@ public class CameraManager : MonoBehaviour
 	private Vector3 closeUpCamPos = new Vector3 (0, 0.9f, 6.0f);
 	private Vector3 mainCamPos = new Vector3(0, 1.65f, 9f);
 	private Vector3 frontCamPos = new Vector3(0, -0.2f, 0.6f);
+	private Vector3 rearCamPos = new Vector3(0, 1f, 7.5f);
 
-	public AnimationCurve switchCamCurve;
-    public Camera mainCam;
+
+    public AnimationCurve switchCamCurve;
+	public Camera mainCam;
 	public Camera rearCam;
 	public Camera firstPersonCam;
 	public TerrainCollider terrainColl;
 	public Transform targetObject;
-    public Transform cameraHelperPoint;
+	public Transform cameraHelperPointFar;
+	public Transform cameraHelperPointClose;
+    public Transform rearCameraHelperPoint;
     public AnimationCurve cameraSmoothMoveCurve;
 
-    private float parameter = 0.175f;
-	private float smoothCamMove = 0.001f;
-    private int switch_cam = 0;
-    private float elapsedTime;
+	private float parameter = 0.175f;
+
+    private float smoothCamMove = 0.001f;
+	public int switchCam = 0;
+	private float elapsedTime;
 
     private Ray camRay;
-	private Ray camLowerRay;
+    private Ray TPFarLowerRay;
+	private Ray TPCloseLowerRay;
 
 	private bool rearCamState;
 	private bool camSwitched;
@@ -50,21 +59,22 @@ public class CameraManager : MonoBehaviour
 	private void FixedUpdate()
 	{
 		camRay = new Ray(targetObject.position, (mainCam.transform.position - targetObject.position));
-		camLowerRay = new Ray(mainCam.transform.position, (cameraHelperPoint.position - mainCam.transform.position));
-	}
+		TPFarLowerRay = new Ray(mainCam.transform.position, (cameraHelperPointFar.position - mainCam.transform.position));
+		TPCloseLowerRay = new Ray(mainCam.transform.position, (cameraHelperPointClose.position - mainCam.transform.position));
+    }
 
 	// Update is called once per frame
 	void Update()
 	{
-        // Full Camera switching part
-        if (elapsedTime < 1)
+		// Full Camera switching part
+		if (elapsedTime < 1)
 		{
-            elapsedTime += Time.deltaTime;
-            // Smooth switching between camera positions
-            if (switch_cam == 1)
+			elapsedTime += Time.deltaTime;
+			// Smooth switching between camera positions
+			if (switchCam == 1)
 				mainCam.GetComponent<SmoothCamera>().initialOffset = Vector3.Lerp(mainCamPos, closeUpCamPos, switchCamCurve.Evaluate(elapsedTime));
 
-			if (switch_cam == 2)
+			if (switchCam == 2)
 			{
 				mainCam.GetComponent<SmoothCamera>().initialOffset = Vector3.Lerp(closeUpCamPos, frontCamPos, switchCamCurve.Evaluate(elapsedTime));
 				if (elapsedTime >= 0.8f && !camSwitched)
@@ -76,7 +86,7 @@ public class CameraManager : MonoBehaviour
 			}
 
 
-			if (switch_cam == 3)
+			if (switchCam == 3)
 			{
 				mainCam.enabled = true;
 				firstPersonCam.enabled = false;
@@ -84,14 +94,13 @@ public class CameraManager : MonoBehaviour
 				camSwitched = false;
 			}
 
-
-			if (Input.GetKeyDown(KeyCode.F2))
+            if (Input.GetKeyDown(KeyCode.F2))
 			{
 				if (rearCamState == true)
 				{
 					rearCam.enabled = false;
 					rearCamState = false;
-				}
+                }
 				else
 				{
 					rearCam.enabled = true;
@@ -100,60 +109,65 @@ public class CameraManager : MonoBehaviour
 			}
 		}
 
-		RaycastHit hitCamUp;
-        RaycastHit hitCamDown;
-        // Change camera on F1
-        if (Input.GetKeyDown(KeyCode.F1))
+		// Change camera position when player pressed F1
+		if (Input.GetKeyDown(KeyCode.F1))
 		{
-			switch (switch_cam)
+			switch (switchCam)
 			{
 				case 0: // Switch from thirdPerson to closeUp
 					elapsedTime = 0;
-					switch_cam++;
+					switchCam++;
 					break;
 
 				case 1: // Switch from closeUp to firstPerson
 					elapsedTime = 0;
-					switch_cam++;
+					switchCam++;
 					break;
 
 				case 2: // Swith from firstPerson back to thirdPerson
 					elapsedTime = 0;
-					switch_cam++;
+					switchCam++;
 					break;
 
-				default:
+				default: // Cycle through all the modes
 					elapsedTime = 0;
-					switch_cam = 1;
+					switchCam = 1;
 					break;
 			}
 
 		}
 
 		// Raycast to prevent the camera from clipping into terrain.
-		// It will be possible to clip through terrain in 1 second when switching camera,
+		// It will be possible to clip through terrain during the first second when switching camera,
 		// this shouldn't cause too many issues though.
+
 		Vector3 newCameraVector = mainCam.GetComponent<SmoothCamera>().initialOffset;
 		Vector3 startingPos = mainCam.GetComponent<SmoothCamera>().initialOffset;
+        RaycastHit hitCamUp;
+        RaycastHit hitCamDown;
 
-		if (switch_cam == 0 || switch_cam == 3) {
+        // Different rays will be used for different camera positions
+        if (switchCam == 0 || switchCam == 3) { // Third person FAR position
+			// Move camera slower, since we are on a larger circle
+            smoothCamMove = 0.001f;
+
             if (terrainColl.Raycast(camRay, out hitCamUp, mainCamPos.magnitude))
-            {
-
-                //parameter += tryMoveCam;
-				if(parameter < 1.25f)
+			// If the ray hits the terain, we move the camera up, in hopes that fixes things.
+			// NOTE: This isn't really viable in a place with low ceilings, since the camera will just colide with the ceiling and will be stuck up there forever.
+			{
+				// Parametric circle equation
+				// limit the maximum angle(parameter) the camera can reach
+				if (parameter < 1.25f) 
 					parameter += 0.004f;
 				else
-                    parameter = 1.25f;
-
-                float circumference = mainCamPos.magnitude;
-                newCameraVector.y = circumference * Mathf.Sin(parameter);
-                newCameraVector.z = circumference * Mathf.Cos(parameter);
-
-                mainCam.GetComponent<SmoothCamera>().initialOffset = Vector3.Slerp(startingPos, newCameraVector, cameraSmoothMoveCurve.Evaluate(smoothCamMove));
+					parameter = 1.25f;
+				
+				mainCam.GetComponent<SmoothCamera>().initialOffset = ComputeAngle(parameter, mainCamPos.magnitude);
 
             }
-            else if (!terrainColl.Raycast(camLowerRay, out hitCamDown, 2.5f) && parameter != 0.175)
+		else if (!terrainColl.Raycast(TPFarLowerRay, out hitCamDown, 2.5f) && parameter != 0.175)
+				// Now if a helper ray stops hitting the terrain, we can safely assume that the player has moved quite far from the wall/obstacle,
+				// so we may begin the lowering process.
 			{
 				// Lower the camera
 				if (parameter > 0.175f)
@@ -161,40 +175,69 @@ public class CameraManager : MonoBehaviour
 				else
 					parameter = 0.175f;
 
-                float circumference = mainCamPos.magnitude;
-                newCameraVector.y = circumference * Mathf.Sin(parameter);
-                newCameraVector.z = circumference * Mathf.Cos(parameter);
-
-                mainCam.GetComponent<SmoothCamera>().initialOffset = Vector3.Slerp(startingPos, newCameraVector, cameraSmoothMoveCurve.Evaluate(smoothCamMove));
+				mainCam.GetComponent<SmoothCamera>().initialOffset = ComputeAngle(parameter, mainCamPos.magnitude);
 
             }
 		}
-		else if(switch_cam == 1)
+		else if(switchCam == 1)
 		{
-			if (terrainColl.Raycast(camRay, out hitCamUp, closeUpCamPos.magnitude))
-			{
-				Debug.Log("I hit close men" + hitCamUp);
-			}
-		}
+			// Make the camera move faster, since we are moving on a smaller circle
+            smoothCamMove = 0.0015f;
+            if (terrainColl.Raycast(camRay, out hitCamUp, closeUpCamPos.magnitude))
+            // If the ray hits the terain, we move the camera up, in hopes that fixes things.
+            // NOTE: This isn't really viable in a place with low ceilings, since the camera will just colide with the ceiling and will be stuck up there forever.
+            {
+				
+                // Parametric circle equation
+                // limit the maximum angle(parameter) the camera can reach
+                if (parameter < 1.25f)
+                    parameter += 0.004f;
+                else
+                    parameter = 1.25f;
+
+                mainCam.GetComponent<SmoothCamera>().initialOffset = ComputeAngle(parameter, closeUpCamPos.magnitude);
+
+            }
+            else if (!terrainColl.Raycast(TPCloseLowerRay, out hitCamDown, 2.5f) && parameter != 0.175)
+            // Now if a helper ray stops hitting the terrain, we can safely assume that the player has moved quite far from the wall/obstacle,
+            // so we may begin the lowering process.
+            {
+                // Lower the camera
+                if (parameter > 0.175f)
+                    parameter -= 0.004f;
+                else
+                    parameter = 0.175f;
+
+                mainCam.GetComponent<SmoothCamera>().initialOffset = ComputeAngle(parameter, closeUpCamPos.magnitude);
+
+            }
+        }
 
 
 
 		if (printRay)
 		{
-			Debug.DrawRay(targetObject.position, (mainCam.transform.position - targetObject.position), Color.red);
-			Debug.DrawRay(mainCam.transform.position, (cameraHelperPoint.position - mainCam.transform.position), Color.yellow);
-            //Debug.DrawRay(targetObject.position, cameraVector, Color.green);
-        }
+            Debug.DrawRay(targetObject.position, (mainCam.transform.position - targetObject.position), Color.red);
+			Debug.DrawRay(mainCam.transform.position, (cameraHelperPointFar.position - mainCam.transform.position), Color.yellow);
+			Debug.DrawRay(mainCam.transform.position, (cameraHelperPointClose.position - mainCam.transform.position), Color.green);
+			//Debug.DrawRay(targetObject.position, cameraVector, Color.green);
+		}
 
-		//Vector3 cameraRay = mainCam.transform.position;
-		
+	}
 
-		//Ray ray;
-		//ray.direction = cameraRay.normalized.z;
-		//RaycastHit hit;
-		//Terrain.activeTerrain.collider.Raycast(ray, out)
-		//Debug.Log(hit.collider.name )
+	Vector3 ComputeAngle(float parameter, float circumference)
+	{
+		// Take the camera position and compute new camera position
+		Vector3 newCameraVector = mainCam.GetComponent<SmoothCamera>().initialOffset;
+		Vector3 startingPos = mainCam.GetComponent<SmoothCamera>().initialOffset;
 
+        // Take the radius of said circle and move the camera accordingly to the position
+		newCameraVector.y = circumference * Mathf.Sin(parameter);
+		newCameraVector.z = circumference * Mathf.Cos(parameter);
 
+        // Spherically interpolate between the old position and the new position computed by the function above
+        // a great explanation why I used Slerp instead of lerp can be viewed here: https://www.youtube.com/watch?v=YJB1QnEmlTs&t=4m23s
+        // I also use a custom curve to change the position of the camera, it resembles a logarithmic function.
+        return Vector3.Slerp(startingPos, newCameraVector, cameraSmoothMoveCurve.Evaluate(smoothCamMove));
 	}
 }

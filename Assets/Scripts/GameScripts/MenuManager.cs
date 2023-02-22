@@ -14,7 +14,10 @@ public class MenuManager : MonoBehaviour
 	public GameObject gameMenu;
 	public GameObject formula;
 	public TMP_Dropdown dropdown;
+	public GameObject controls;
 	public TextMeshProUGUI speedNumber;
+
+	private bool showControls;
 
 	// Handles pausing and 
 	private void Awake()
@@ -36,6 +39,7 @@ public class MenuManager : MonoBehaviour
 	{
 		gameMenu.SetActive(false);
 		action.Pause.PauseGame.performed += _ => DeterminePause();
+		controls.SetActive(false);
 
 		// The dropdown list color would require way more time and there are way more important matters than this
 		// maybe I will fix the color scheme later
@@ -97,6 +101,21 @@ public class MenuManager : MonoBehaviour
 				break;
 		}
 		
+	}
+
+	public void ShowControls()
+	{
+		if(showControls == true)
+		{
+			controls.SetActive(false);
+			showControls = false;
+		}
+		else
+		{
+			controls.SetActive(true);
+			showControls = true;
+		}
+			
 	}
 
 	void FixedUpdate()

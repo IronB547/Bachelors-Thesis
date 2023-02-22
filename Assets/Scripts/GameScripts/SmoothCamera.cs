@@ -6,6 +6,8 @@ using UnityEngine;
 public class SmoothCamera : MonoBehaviour
 {
 	public Transform targetObject;
+	public GameObject CameraManager;
+
 	public Vector3 initialOffset;
 	public Vector3 cameraPosition;
 
@@ -60,10 +62,14 @@ public class SmoothCamera : MonoBehaviour
 
 		transform.position = cameraPosition;
 
-		// Curve for rotation when player hits the terrain so the camera looks at the center of the formula
-		camRot = camRotationCurve.Evaluate(initialOffset.y);
-		//Rotation of the camera itself
-		Quaternion cameraRotation = Quaternion.Euler(camRot, transform.rotation.eulerAngles.y, 0);
+		// Using curve for rotation when player hits the terrain so the camera looks at the center of the formula
+		if(CameraManager.GetComponent<CameraManager>().switchCam != 1)
+			camRot = camRotationCurve.Evaluate(initialOffset.y);
+		else
+            camRot = camRotationCurve.Evaluate(initialOffset.y) * 2f; // Since the circle is smaller, rotate the camera more
+
+        //Rotation of the camera itself
+        Quaternion cameraRotation = Quaternion.Euler(camRot, transform.rotation.eulerAngles.y, 0);
 
 		transform.rotation = Quaternion.Lerp(cameraRotation, targetObject.rotation, smoothSlerp);
 
