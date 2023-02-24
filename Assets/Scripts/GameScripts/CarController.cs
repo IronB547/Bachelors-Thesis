@@ -103,7 +103,7 @@ public class CarController : MonoBehaviour
 			case CarDriveType.FrontWheelDrive:
 				for (int i = 0; i < 2; i++)
 				{
-					if (WheelsCollider[i].rpm >= 2000f || WheelsCollider[i].rpm <= -2000f)
+					if (WheelsCollider[i].rpm >= 3000f || WheelsCollider[i].rpm <= -2000f)
 					{
 						WheelsCollider[i].brakeTorque = maxBreakTorque;
 						continue;
@@ -118,7 +118,7 @@ public class CarController : MonoBehaviour
 			case CarDriveType.RearWheelDrive:
 				for (int i = 2; i < 4; i++)
 				{
-					if (WheelsCollider[i].rpm >= 2000f || WheelsCollider[i].rpm <= -2000f)
+					if (WheelsCollider[i].rpm >= 3000f || WheelsCollider[i].rpm <= -2000f)
 					{
 						WheelsCollider[i].brakeTorque = maxBreakTorque;
 						continue;
@@ -173,6 +173,7 @@ public class CarController : MonoBehaviour
 		// Turn on handbreak when holding down spacebar
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
+
 			for (int i = 2; i < 4; i++)
 			{
 				WheelsCollider[i].brakeTorque = maxBreakTorque;
@@ -182,7 +183,9 @@ public class CarController : MonoBehaviour
 		// And turn it off
 		if (Input.GetKeyUp(KeyCode.Space))
 		{
-			for (int i = 2; i < 4; i++)
+            
+
+            for (int i = 2; i < 4; i++)
 			{
 				WheelsCollider[i].brakeTorque = 0;
 			}

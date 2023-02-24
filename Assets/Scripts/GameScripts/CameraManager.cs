@@ -5,7 +5,7 @@ using System.Net;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
+
 
 public class CameraManager : MonoBehaviour
 {

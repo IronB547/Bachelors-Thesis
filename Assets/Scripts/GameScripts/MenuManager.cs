@@ -120,7 +120,10 @@ public class MenuManager : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		speedNumber.text = (formula.GetComponent<Rigidbody>().velocity.magnitude * 3.6).ToString("0.00");
-	}
+		if (formula.GetComponentInChildren<WheelCollider>().rpm > 0)
+			speedNumber.text = (formula.GetComponent<Rigidbody>().velocity.magnitude * 3.6).ToString("0.00");
+		else
+            speedNumber.text = (formula.GetComponent<Rigidbody>().velocity.magnitude * 3.6).ToString("-0.00");
+    }
 
 }
