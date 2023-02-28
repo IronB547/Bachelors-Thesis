@@ -31,12 +31,14 @@ public class CarController : MonoBehaviour
 	private float steerRotationDamp = 0.5f;
 	private float motor;
 	private bool carFlip = false;
+	private bool handbrake = false;
 
 	// Start is called before the first frame update
 	void Start()
 	{
 		
 		carFlip = false;
+		handbrake = false;
 	}
 
 	// Update is called once per frame
@@ -101,13 +103,13 @@ public class CarController : MonoBehaviour
 				{
 					if (WheelsCollider[i].rpm >= 2000f || WheelsCollider[i].rpm <= -2000f)
 						WheelsCollider[i].brakeTorque = maxBreakTorque;
-					else
+					else if(!handbrake)
 						WheelsCollider[i].brakeTorque = 0;
 				}
 
 				// This torque aplication is meant to help eliminate massive RPM spikes in wheels so that 
 				// the vehicle doesn't veer to sides, it doesn't do a great job, but it suffices
-				if (totalWheelRPM < 0 && (formulaSpeed * 3.6f > 40))
+				if (totalWheelRPM < 0 && (formulaSpeed > 40))
 				{
 					for (int i = 0; i < 4; i++)
 						WheelsCollider[i].motorTorque = 0;
@@ -144,7 +146,7 @@ public class CarController : MonoBehaviour
 						WheelsCollider[i].brakeTorque = maxBreakTorque;
 						continue;
 					}
-					else
+					else if(!handbrake)
 						WheelsCollider[i].brakeTorque = 0;
 
 					WheelsCollider[i].motorTorque = motor * 2;
@@ -195,7 +197,7 @@ public class CarController : MonoBehaviour
 		// Turn on handbreak when holding down spacebar
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-
+			handbrake = true;
 			for (int i = 2; i < 4; i++)
 			{
 				WheelsCollider[i].brakeTorque = maxBreakTorque;
@@ -204,9 +206,8 @@ public class CarController : MonoBehaviour
 
 		// And turn it off
 		if (Input.GetKeyUp(KeyCode.Space))
-		{
-			
-
+		{			
+			handbrake = false;
 			for (int i = 2; i < 4; i++)
 			{
 				WheelsCollider[i].brakeTorque = 0;

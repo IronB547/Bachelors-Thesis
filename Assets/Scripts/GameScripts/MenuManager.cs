@@ -124,8 +124,12 @@ public class MenuManager : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		// A not so great way to determine if the car is going backwards, but it's probably the best way I could think of.
-		if (formula.GetComponentInChildren<WheelCollider>().rpm >= 0)
+		if (formula.GetComponent<CarController>().formulaSpeed > -0.1f && formula.GetComponent<CarController>().formulaSpeed < 0.1f)
+		{
+			speedNumber.text = (formula.GetComponent<CarController>().formulaSpeed).ToString("0.00");
+			GearNumber.text = "N";
+		}
+		else if (formula.GetComponentInChildren<WheelCollider>().rpm >= 0) // A not so great way to determine if the car is going backwards, but it's probably the best way I could think of.
 		{
 			speedNumber.text = (formula.GetComponent<CarController>().formulaSpeed).ToString("0.00");
 			GearNumber.text = soundManager.GetComponent<SoundManager>().transmission.ToString();
@@ -134,10 +138,8 @@ public class MenuManager : MonoBehaviour
 		{
 			speedNumber.text = (formula.GetComponent<CarController>().formulaSpeed).ToString("-0.00");
 			GearNumber.text = "R";
-        }
+		}
 
-
-        
     }
 
 }
