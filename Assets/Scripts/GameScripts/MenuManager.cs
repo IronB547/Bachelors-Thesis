@@ -13,9 +13,12 @@ public class MenuManager : MonoBehaviour
 	public static bool paused = false;
 	public GameObject gameMenu;
 	public GameObject formula;
-	public TMP_Dropdown dropdown;
 	public GameObject controls;
-	public TextMeshProUGUI speedNumber;
+    public GameObject soundManager;
+
+    public TMP_Dropdown dropdown;
+    public TextMeshProUGUI speedNumber;
+	public TextMeshProUGUI GearNumber;
 
 	private bool showControls;
 
@@ -40,10 +43,11 @@ public class MenuManager : MonoBehaviour
 		gameMenu.SetActive(false);
 		action.Pause.PauseGame.performed += _ => DeterminePause();
 		controls.SetActive(false);
+        GearNumber.text = soundManager.GetComponent<SoundManager>().transmission.ToString();
 
-		// The dropdown list color would require way more time and there are way more important matters than this
-		// maybe I will fix the color scheme later
-		dropdown.SetValueWithoutNotify(2);
+        // The dropdown list color would require way more time and there are way more important matters than this
+        // maybe I will fix the color scheme later
+        dropdown.SetValueWithoutNotify(2);
 		dropdown.onValueChanged.AddListener(delegate { SelectedItem(dropdown); });
 	}
 
@@ -120,10 +124,20 @@ public class MenuManager : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (formula.GetComponentInChildren<WheelCollider>().rpm > 0)
-			speedNumber.text = (formula.GetComponent<Rigidbody>().velocity.magnitude * 3.6).ToString("0.00");
+		// A not so great way to determine if the car is going backwards, but it's probably the best way I could think of.
+		if (formula.GetComponentInChildren<WheelCollider>().rpm >= 0)
+		{
+			speedNumber.text = (formula.GetComponent<CarController>().formulaSpeed).ToString("0.00");
+			GearNumber.text = soundManager.GetComponent<SoundManager>().transmission.ToString();
+		}
 		else
-            speedNumber.text = (formula.GetComponent<Rigidbody>().velocity.magnitude * 3.6).ToString("-0.00");
+		{
+			speedNumber.text = (formula.GetComponent<CarController>().formulaSpeed).ToString("-0.00");
+			GearNumber.text = "R";
+        }
+
+
+        
     }
 
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Xml.Schema;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Quaternion = UnityEngine.Quaternion;
@@ -21,36 +22,48 @@ public class CarController : MonoBehaviour
 
 	public GameObject SteeringWheel;
 	
-
 	public float maxMotorTorque;
 	public float maxSteeringAngle;
 	public float maxBreakTorque;
+	public float totalWheelRPM;
+	public float formulaSpeed;
 	private float maxTurnAngle = 45f;
 	private float steerRotationDamp = 0.5f;
 	private float motor;
+	private bool carFlip = false;
 
 	// Start is called before the first frame update
 	void Start()
 	{
 		
+		carFlip = false;
 	}
 
 	// Update is called once per frame
 	void FixedUpdate()
 	{
-		float formulaSpeed = gameObject.GetComponent<Rigidbody>().velocity.magnitude;
+
+		// Compute wheel RPM to determine if the vehicle is going backwards.
+		totalWheelRPM = WheelsCollider[0].rpm + WheelsCollider[1].rpm + WheelsCollider[2].rpm + WheelsCollider[3].rpm;
+
+		// Compute the total speed of the vehicle
+		formulaSpeed = gameObject.GetComponent<Rigidbody>().velocity.magnitude * 3.6f;
+
+		// Check if the car has been flipped or not
+		if (WheelsCollider[0].isGrounded && WheelsCollider[1].isGrounded && WheelsCollider[2].isGrounded && WheelsCollider[3].isGrounded)
+			carFlip = false;
 
 		// A limiter for steering angle in high velocities
-		if (formulaSpeed >= 20.0f)
-			maxSteeringAngle = 10;
+		if (formulaSpeed >= 72)
+		maxSteeringAngle = 10;
 
-		else if (formulaSpeed >= 15.0f)
+		else if (formulaSpeed >= 54)
 		{
-			maxSteeringAngle = 20 - (2 * ((int)formulaSpeed - 15));
+			maxSteeringAngle = 20 - (2 * ((int)(formulaSpeed / 3.6f) - 15));
 		}
-		else if (formulaSpeed >= 10.0f)
+		else if (formulaSpeed >= 36)
 		{
-			maxSteeringAngle = 35 - (3 * ((int)formulaSpeed - 10));
+			maxSteeringAngle = 35 - (3 * ((int)(formulaSpeed / 3.6f) - 10));
 		}
 		else
 			maxSteeringAngle = 35;
@@ -94,10 +107,18 @@ public class CarController : MonoBehaviour
 
 				// This torque aplication is meant to help eliminate massive RPM spikes in wheels so that 
 				// the vehicle doesn't veer to sides, it doesn't do a great job, but it suffices
-				WheelsCollider[0].motorTorque = motor * 1.3f;
-				WheelsCollider[3].motorTorque = motor * 1.3f;
-				WheelsCollider[1].motorTorque = motor * 1.3f;
-				WheelsCollider[2].motorTorque = motor * 1.3f;
+				if (totalWheelRPM < 0 && (formulaSpeed * 3.6f > 40))
+				{
+					for (int i = 0; i < 4; i++)
+						WheelsCollider[i].motorTorque = 0;
+				}
+				else 
+				{
+					WheelsCollider[0].motorTorque = motor * 1.3f;
+					WheelsCollider[3].motorTorque = motor * 1.3f;
+					WheelsCollider[1].motorTorque = motor * 1.3f;
+					WheelsCollider[2].motorTorque = motor * 1.3f;
+				}
 
 				break;
 			case CarDriveType.FrontWheelDrive:
@@ -110,7 +131,7 @@ public class CarController : MonoBehaviour
 					}
 					else
 						WheelsCollider[i].brakeTorque = 0;
-
+					
 					WheelsCollider[i].motorTorque = motor * 2;
 				}
 
@@ -147,8 +168,9 @@ public class CarController : MonoBehaviour
 	void Update()
 	{
 		// Flip the car on pressing END key
-		if (Input.GetKeyDown(KeyCode.End))
+		if (Input.GetKeyDown(KeyCode.End) && !carFlip)
 		{
+			carFlip = true;
 			Vector3 carRotation = this.transform.rotation.eulerAngles;
 			Vector3 carPosition = this.transform.position;
 
@@ -158,8 +180,8 @@ public class CarController : MonoBehaviour
 			gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
 			gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
-			if (this.transform.position.y <= 20)
-				this.transform.position = new Vector3(carPosition.x, carPosition.y + 2, carPosition.z);
+			
+			this.transform.position = new Vector3(carPosition.x, carPosition.y + 2, carPosition.z);
 
 			this.transform.rotation = Quaternion.Euler(carRotation);
 		}
@@ -183,9 +205,9 @@ public class CarController : MonoBehaviour
 		// And turn it off
 		if (Input.GetKeyUp(KeyCode.Space))
 		{
-            
+			
 
-            for (int i = 2; i < 4; i++)
+			for (int i = 2; i < 4; i++)
 			{
 				WheelsCollider[i].brakeTorque = 0;
 			}
