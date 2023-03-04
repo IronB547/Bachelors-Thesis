@@ -5,7 +5,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class MenuManager : MonoBehaviour
 {
@@ -15,12 +14,18 @@ public class MenuManager : MonoBehaviour
 	public GameObject formula;
 	public GameObject controls;
     public GameObject soundManager;
+    public GameObject FlipHelperPoint;
+    public GameObject FlipPanel;
+    public TerrainCollider terrainColl;
 
     public TMP_Dropdown dropdown;
     public TextMeshProUGUI speedNumber;
 	public TextMeshProUGUI GearNumber;
 
-	private bool showControls;
+    private Ray flipRay;
+    private bool showControls;
+	private float flipTimer = 0;
+	private bool hitTerrain;
 
 	// Handles pausing and 
 	private void Awake()
@@ -44,6 +49,8 @@ public class MenuManager : MonoBehaviour
 		action.Pause.PauseGame.performed += _ => DeterminePause();
 		controls.SetActive(false);
         GearNumber.text = soundManager.GetComponent<SoundManager>().transmission.ToString();
+		hitTerrain = false;
+        FlipPanel.SetActive(false);
 
         // The dropdown list color would require way more time and there are way more important matters than this
         // maybe I will fix the color scheme later
@@ -140,6 +147,27 @@ public class MenuManager : MonoBehaviour
 			GearNumber.text = "R";
 		}
 
-    }
 
+        RaycastHit hit;
+		flipRay = new Ray(formula.transform.position, FlipHelperPoint.transform.position - formula.transform.position);
+        if (terrainColl.Raycast(flipRay, out hit, 5f))
+		{
+			hitTerrain = true;
+		}
+
+		if (!hitTerrain)
+			flipTimer = 0;
+
+		flipTimer += Time.deltaTime;
+		hitTerrain = false;
+        FlipPanel.SetActive(false);
+
+        if (flipTimer > 3f && formula.GetComponent<CarController>().formulaSpeed < 1)
+		{
+			FlipPanel.SetActive(true);
+			//Debug.Log("I have been flipped for longer than three seconds");
+		}
+
+        Debug.DrawRay(formula.transform.position, FlipHelperPoint.transform.position - formula.transform.position, Color.cyan);
+    }
 }

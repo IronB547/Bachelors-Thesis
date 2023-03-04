@@ -15,7 +15,7 @@ public class CameraManager : MonoBehaviour
 	private Vector3 frontCamPos = new Vector3(0, -0.2f, 0.6f);
 	private Vector3 rearCamPos = new Vector3(0, 1f, 7.5f);
 
-
+    public GameObject Formula;
     public AnimationCurve switchCamCurve;
 	public Camera mainCam;
 	public Camera rearCam;
@@ -24,13 +24,14 @@ public class CameraManager : MonoBehaviour
 	public Transform targetObject;
 	public Transform cameraHelperPointFar;
 	public Transform cameraHelperPointClose;
-    public Transform rearCameraHelperPoint;
+
     public AnimationCurve cameraSmoothMoveCurve;
+    public AnimationCurve paramStep;
 
-	private float parameter = 0.175f;
+    public float parameter = 0.175f;
 
-    private float smoothCamMove = 0.001f;
-	public int switchCam = 0;
+    private float smoothCamMove = 0.05f;
+    public int switchCam = 0;
 	private float elapsedTime;
 
     private Ray camRay;
@@ -58,7 +59,7 @@ public class CameraManager : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		camRay = new Ray(targetObject.position, (mainCam.transform.position - targetObject.position));
+		camRay = new Ray(targetObject.position, (mainCam.transform.position - (targetObject.position  + new Vector3(0, 0.5f, -0.5f))));
 		TPFarLowerRay = new Ray(mainCam.transform.position, (cameraHelperPointFar.position - mainCam.transform.position));
 		TPCloseLowerRay = new Ray(mainCam.transform.position, (cameraHelperPointClose.position - mainCam.transform.position));
     }
@@ -149,7 +150,7 @@ public class CameraManager : MonoBehaviour
         // Different rays will be used for different camera positions
         if (switchCam == 0 || switchCam == 3) { // Third person FAR position
 			// Move camera slower, since we are on a larger circle
-            smoothCamMove = 0.001f;
+            smoothCamMove = 0.025f;
 
             if (terrainColl.Raycast(camRay, out hitCamUp, mainCamPos.magnitude))
 			// If the ray hits the terain, we move the camera up, in hopes that fixes things.
@@ -158,20 +159,20 @@ public class CameraManager : MonoBehaviour
 				// Parametric circle equation
 				// limit the maximum angle(parameter) the camera can reach
 				if (parameter < 1.25f) 
-					parameter += 0.004f;
+					parameter += paramStep.Evaluate(Formula.GetComponent<CarController>().formulaSpeed);
 				else
 					parameter = 1.25f;
 				
 				mainCam.GetComponent<SmoothCamera>().initialOffset = ComputeAngle(parameter, mainCamPos.magnitude);
 
             }
-		else if (!terrainColl.Raycast(TPFarLowerRay, out hitCamDown, 2.5f) && parameter != 0.175)
+		else if (!terrainColl.Raycast(TPFarLowerRay, out hitCamDown, 2f) && parameter != 0.175)
 				// Now if a helper ray stops hitting the terrain, we can safely assume that the player has moved quite far from the wall/obstacle,
 				// so we may begin the lowering process.
 			{
 				// Lower the camera
 				if (parameter > 0.175f)
-					parameter -= 0.004f;
+					parameter -= paramStep.Evaluate(Formula.GetComponent<CarController>().formulaSpeed);
 				else
 					parameter = 0.175f;
 
@@ -182,7 +183,7 @@ public class CameraManager : MonoBehaviour
 		else if(switchCam == 1)
 		{
 			// Make the camera move faster, since we are moving on a smaller circle
-            smoothCamMove = 0.0015f;
+            smoothCamMove = 0.05f;
             if (terrainColl.Raycast(camRay, out hitCamUp, closeUpCamPos.magnitude))
             // If the ray hits the terain, we move the camera up, in hopes that fixes things.
             // NOTE: This isn't really viable in a place with low ceilings, since the camera will just colide with the ceiling and will be stuck up there forever.
@@ -191,7 +192,7 @@ public class CameraManager : MonoBehaviour
                 // Parametric circle equation
                 // limit the maximum angle(parameter) the camera can reach
                 if (parameter < 1.25f)
-                    parameter += 0.004f;
+                    parameter += paramStep.Evaluate(Formula.GetComponent<CarController>().formulaSpeed);
                 else
                     parameter = 1.25f;
 
@@ -204,7 +205,7 @@ public class CameraManager : MonoBehaviour
             {
                 // Lower the camera
                 if (parameter > 0.175f)
-                    parameter -= 0.004f;
+                    parameter -= paramStep.Evaluate(Formula.GetComponent<CarController>().formulaSpeed);
                 else
                     parameter = 0.175f;
 
@@ -217,8 +218,8 @@ public class CameraManager : MonoBehaviour
 
 		if (printRay)
 		{
-            Debug.DrawRay(targetObject.position, (mainCam.transform.position - targetObject.position), Color.red);
-			Debug.DrawRay(mainCam.transform.position, (cameraHelperPointFar.position - mainCam.transform.position), Color.yellow);
+            Debug.DrawRay(targetObject.position, (mainCam.transform.position - (targetObject.position + new Vector3(0,0.5f,-0.5f))), Color.red);
+			Debug.DrawRay(mainCam.transform.position, ((mainCam.transform.position + new Vector3(0,-1.5f,1.5f)) - mainCam.transform.position), Color.yellow);
 			Debug.DrawRay(mainCam.transform.position, (cameraHelperPointClose.position - mainCam.transform.position), Color.green);
 			//Debug.DrawRay(targetObject.position, cameraVector, Color.green);
 		}
