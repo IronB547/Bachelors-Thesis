@@ -92,7 +92,7 @@ Material:
     - _StencilWriteMaskDistortionVec: 4
     - _StencilWriteMaskGBuffer: 14
     - _StencilWriteMaskMV: 40
-    - _Strength: 0.136
+    - _Strength: 0.086
     - _SupportDecals: 0
     - _SurfaceType: 1
     - _TransparentBackfaceEnable: 0
