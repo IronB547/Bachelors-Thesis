@@ -20,6 +20,7 @@ public class SmoothCamera : MonoBehaviour
 
 	public AnimationCurve camPositionCurve;
     public AnimationCurve camRotationCurve;
+    public AnimationCurve camRotationCurveClose;
 
     void Start()
 	{
@@ -66,7 +67,7 @@ public class SmoothCamera : MonoBehaviour
 		if(CameraManager.GetComponent<CameraManager>().switchCam != 1)
 			camRot = camRotationCurve.Evaluate(initialOffset.y);
 		else
-            camRot = camRotationCurve.Evaluate(initialOffset.y) * 2f; // Since the circle is smaller, rotate the camera more
+            camRot = camRotationCurveClose.Evaluate(initialOffset.y); // Since the circle is smaller, rotate the camera more
 
         //Rotation of the camera itself
         Quaternion cameraRotation = Quaternion.Euler(camRot, transform.rotation.eulerAngles.y, 0);

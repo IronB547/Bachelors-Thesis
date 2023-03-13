@@ -150,6 +150,7 @@ public class MenuManager : MonoBehaviour
 
         RaycastHit hit;
 		flipRay = new Ray(formula.transform.position, FlipHelperPoint.transform.position - formula.transform.position);
+
         if (terrainColl.Raycast(flipRay, out hit, 5f))
 		{
 			hitTerrain = true;
@@ -162,7 +163,7 @@ public class MenuManager : MonoBehaviour
 		hitTerrain = false;
         FlipPanel.SetActive(false);
 
-        if (flipTimer > 3f && formula.GetComponent<CarController>().formulaSpeed < 1)
+        if (flipTimer > 3f && formula.GetComponent<CarController>().formulaSpeed < 4)
 		{
 			FlipPanel.SetActive(true);
 			//Debug.Log("I have been flipped for longer than three seconds");

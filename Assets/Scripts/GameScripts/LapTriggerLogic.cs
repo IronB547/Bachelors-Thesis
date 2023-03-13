@@ -8,6 +8,7 @@ public class LapTriggerLogic : MonoBehaviour
 	public GameObject Clock;
 	public GameObject StartTrigger;
 	public GameObject FinishTrigger;
+	public GameObject FinishPanel;
 
 	public int laps = 3; // Later change this number from settings
 	public TextMeshProUGUI LapsLeft;
@@ -22,6 +23,7 @@ public class LapTriggerLogic : MonoBehaviour
 			FinishTrigger.SetActive(false);
 		}
 
+		FinishPanel.SetActive(false);
 	}
 
 	void OnTriggerEnter(Collider collided)
@@ -51,6 +53,7 @@ public class LapTriggerLogic : MonoBehaviour
 			if (laps <= 0)
 			{
 				Clock.GetComponent<ClockManager>().enabled = false;
+				FinishPanel.SetActive(true);
 				//collided.transform.parent.gameObject.transform.parent.GetComponent<CarUserControl>().enabled = false; // If a car has reached the finish line, terminate user control.
 			}
 		}

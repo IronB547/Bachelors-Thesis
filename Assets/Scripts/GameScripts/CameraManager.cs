@@ -13,7 +13,6 @@ public class CameraManager : MonoBehaviour
 	private Vector3 closeUpCamPos = new Vector3 (0, 0.9f, 6.0f);
 	private Vector3 mainCamPos = new Vector3(0, 1.65f, 9f);
 	private Vector3 frontCamPos = new Vector3(0, -0.2f, 0.6f);
-	private Vector3 rearCamPos = new Vector3(0, 1f, 7.5f);
 
     public GameObject Formula;
     public AnimationCurve switchCamCurve;
@@ -22,8 +21,6 @@ public class CameraManager : MonoBehaviour
 	public Camera firstPersonCam;
 	public TerrainCollider terrainColl;
 	public Transform targetObject;
-	public Transform cameraHelperPointFar;
-	public Transform cameraHelperPointClose;
 
     public AnimationCurve cameraSmoothMoveCurve;
     public AnimationCurve paramStep;
@@ -35,10 +32,10 @@ public class CameraManager : MonoBehaviour
 	private float elapsedTime;
 
     private Ray camRay;
-    private Ray TPFarLowerRay;
-	private Ray TPCloseLowerRay;
+    private Ray TPLowerRay;
+    //private Ray TPCloseLowerRay;
 
-	private bool rearCamState;
+    private bool rearCamState;
 	private bool camSwitched;
 
 	public bool printRay = true;
@@ -59,9 +56,9 @@ public class CameraManager : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		camRay = new Ray(targetObject.position, (mainCam.transform.position - (targetObject.position  + new Vector3(0, 0.5f, -0.5f))));
-		TPFarLowerRay = new Ray(mainCam.transform.position, (cameraHelperPointFar.position - mainCam.transform.position));
-		TPCloseLowerRay = new Ray(mainCam.transform.position, (cameraHelperPointClose.position - mainCam.transform.position));
+		camRay = new Ray(targetObject.position, (mainCam.transform.position - (targetObject.position  + new Vector3(0, 1f, -1f))));
+		TPLowerRay = new Ray(mainCam.transform.position - new Vector3(0, 0.5f, -0.5f), mainCam.transform.position - targetObject.transform.position + new Vector3(0f, -10f, 0f));
+		//TPCloseLowerRay = new Ray(mainCam.transform.position - new Vector3(0, 0.5f, -0.5f), (cameraHelperPointClose.position - mainCam.transform.position));
     }
 
 	// Update is called once per frame
@@ -166,7 +163,7 @@ public class CameraManager : MonoBehaviour
 				mainCam.GetComponent<SmoothCamera>().initialOffset = ComputeAngle(parameter, mainCamPos.magnitude);
 
             }
-		else if (!terrainColl.Raycast(TPFarLowerRay, out hitCamDown, 2f) && parameter != 0.175)
+		else if (!terrainColl.Raycast(TPLowerRay, out hitCamDown, 2f) && parameter != 0.175)
 				// Now if a helper ray stops hitting the terrain, we can safely assume that the player has moved quite far from the wall/obstacle,
 				// so we may begin the lowering process.
 			{
@@ -199,7 +196,7 @@ public class CameraManager : MonoBehaviour
                 mainCam.GetComponent<SmoothCamera>().initialOffset = ComputeAngle(parameter, closeUpCamPos.magnitude);
 
             }
-            else if (!terrainColl.Raycast(TPCloseLowerRay, out hitCamDown, 2.5f) && parameter != 0.175)
+            else if (!terrainColl.Raycast(TPLowerRay, out hitCamDown, 1.5f) && parameter != 0.175)
             // Now if a helper ray stops hitting the terrain, we can safely assume that the player has moved quite far from the wall/obstacle,
             // so we may begin the lowering process.
             {
@@ -214,15 +211,15 @@ public class CameraManager : MonoBehaviour
             }
         }
 
-
-
 		if (printRay)
 		{
             Debug.DrawRay(targetObject.position, (mainCam.transform.position - (targetObject.position + new Vector3(0,0.5f,-0.5f))), Color.red);
-			Debug.DrawRay(mainCam.transform.position, ((mainCam.transform.position + new Vector3(0,-1.5f,1.5f)) - mainCam.transform.position), Color.yellow);
-			Debug.DrawRay(mainCam.transform.position, (cameraHelperPointClose.position - mainCam.transform.position), Color.green);
-			//Debug.DrawRay(targetObject.position, cameraVector, Color.green);
-		}
+			//Debug.DrawRay(mainCam.transform.position - new Vector3(0, 0.5f, -0.5f), (cameraHelperPointFar.position - mainCam.transform.position), Color.yellow);
+            //Debug.DrawRay(mainCam.transform.position - new Vector3(0, 0.5f, -0.5f), (cameraHelperPointClose.position - mainCam.transform.position), Color.green);
+
+            Debug.DrawRay(mainCam.transform.position - new Vector3(0, 0.5f, -0.5f), (mainCam.transform.position - targetObject.transform.position + new Vector3(0f, -10f, 0f)), Color.yellow);
+
+        }
 
 	}
 

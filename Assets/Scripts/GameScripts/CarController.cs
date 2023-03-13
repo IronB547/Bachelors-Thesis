@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Security.Cryptography;
 using System.Xml.Schema;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,21 +25,23 @@ public class CarController : MonoBehaviour
 	
 	public float maxMotorTorque;
 	public float maxSteeringAngle;
-	public float maxBreakTorque;
+	public float maxBrakeTorque = 1000;
 	public float totalWheelRPM;
 	public float formulaSpeed;
 	private float maxTurnAngle = 45f;
 	private float steerRotationDamp = 0.5f;
 	private float motor;
 	private bool carFlip = false;
-	private bool handbrake = false;
+	private bool brakes = false;
+    private bool drift = false;
 
-	// Start is called before the first frame update
-	void Start()
+    // Start is called before the first frame update
+    void Start()
 	{
 		
 		carFlip = false;
-		handbrake = false;
+		brakes = false;
+		drift = false;
 	}
 
 	// Update is called once per frame
@@ -56,21 +59,28 @@ public class CarController : MonoBehaviour
 			carFlip = false;
 
 		// A limiter for steering angle in high velocities
-		if (formulaSpeed >= 72)
-		maxSteeringAngle = 10;
-
-		else if (formulaSpeed >= 54)
+		if (drift)
 		{
-			maxSteeringAngle = 20 - (2 * ((int)(formulaSpeed / 3.6f) - 15));
-		}
-		else if (formulaSpeed >= 36)
-		{
-			maxSteeringAngle = 35 - (3 * ((int)(formulaSpeed / 3.6f) - 10));
+			maxSteeringAngle = 15;
 		}
 		else
-			maxSteeringAngle = 35;
+		{
+			if (formulaSpeed >= 72)
+				maxSteeringAngle = 10;
 
-		motor = maxMotorTorque * Input.GetAxis("Vertical");
+			else if (formulaSpeed >= 54)
+			{
+				maxSteeringAngle = 20 - (2 * ((int)(formulaSpeed / 3.6f) - 15));
+			}
+			else if (formulaSpeed >= 36)
+			{
+				maxSteeringAngle = 35 - (3 * ((int)(formulaSpeed / 3.6f) - 10));
+			}
+			else
+				maxSteeringAngle = 35;
+		}
+
+        motor = maxMotorTorque * Input.GetAxis("Vertical");
 		float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
 		WheelHit wheelData;
 
@@ -102,8 +112,8 @@ public class CarController : MonoBehaviour
 				for (int i = 0; i < 4; i++)
 				{
 					if (WheelsCollider[i].rpm >= 2000f || WheelsCollider[i].rpm <= -2000f)
-						WheelsCollider[i].brakeTorque = maxBreakTorque;
-					else if(!handbrake)
+						WheelsCollider[i].brakeTorque = maxBrakeTorque;
+					else if(!brakes)
 						WheelsCollider[i].brakeTorque = 0;
 				}
 
@@ -126,27 +136,27 @@ public class CarController : MonoBehaviour
 			case CarDriveType.FrontWheelDrive:
 				for (int i = 0; i < 2; i++)
 				{
-					if (WheelsCollider[i].rpm >= 3000f || WheelsCollider[i].rpm <= -2000f)
+					if (WheelsCollider[i].rpm >= 3500f || WheelsCollider[i].rpm <= -2000f)
 					{
-						WheelsCollider[i].brakeTorque = maxBreakTorque;
+						WheelsCollider[i].brakeTorque = maxBrakeTorque;
 						continue;
 					}
 					else
 						WheelsCollider[i].brakeTorque = 0;
 					
-					WheelsCollider[i].motorTorque = motor * 2;
+					WheelsCollider[i].motorTorque = motor * 2f;
 				}
 
 				break;
 			case CarDriveType.RearWheelDrive:
 				for (int i = 2; i < 4; i++)
 				{
-					if (WheelsCollider[i].rpm >= 3000f || WheelsCollider[i].rpm <= -2000f)
+					if (WheelsCollider[i].rpm >= 3500f || WheelsCollider[i].rpm <= -2000f)
 					{
-						WheelsCollider[i].brakeTorque = maxBreakTorque;
+						WheelsCollider[i].brakeTorque = maxBrakeTorque;
 						continue;
 					}
-					else if(!handbrake)
+					else if(!brakes)
 						WheelsCollider[i].brakeTorque = 0;
 
 					WheelsCollider[i].motorTorque = motor * 2;
@@ -197,22 +207,73 @@ public class CarController : MonoBehaviour
 		// Turn on handbreak when holding down spacebar
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			handbrake = true;
-			for (int i = 2; i < 4; i++)
+            drift = true;
+
+            for (int i = 0; i < 4; i++)
 			{
-				WheelsCollider[i].brakeTorque = maxBreakTorque;
+				WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
+
+				curve.extremumSlip = 4f;
+				curve.extremumValue = 2f;
+
+				WheelsCollider[i].sidewaysFriction = curve;
 			}
-		}
+
+            for (int i = 2; i < 4; i++)
+			{
+				WheelsCollider[i].brakeTorque = maxBrakeTorque / 3f;
+			}
+
+        }
 
 		// And turn it off
 		if (Input.GetKeyUp(KeyCode.Space))
-		{			
-			handbrake = false;
+		{
+			drift = false;
+
+			for(int i = 0; i < 2; i++)
+			{
+				WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
+
+				curve.extremumSlip = 0.3f;
+                curve.extremumValue = 1f;
+
+                WheelsCollider[i].sidewaysFriction = curve;
+			}
+
 			for (int i = 2; i < 4; i++)
 			{
-				WheelsCollider[i].brakeTorque = 0;
-			}
+				WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
+				
+				curve.extremumSlip = 0.2f;
+                curve.extremumValue = 1f;
+
+                WheelsCollider[i].sidewaysFriction = curve;
+                WheelsCollider[i].brakeTorque = 0f;
+            }
 		}
 
-	}
+		if (Input.GetKeyDown(KeyCode.LeftShift))
+		{
+            brakes = true;
+
+            for (int i = 2; i < 4; i++)
+			{
+				WheelsCollider[i].brakeTorque = maxBrakeTorque;
+			}
+
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            brakes = false;
+
+            for (int i = 2; i < 4; i++)
+            {
+                WheelsCollider[i].brakeTorque = 0f;
+            }
+
+        }
+
+    }
 }
