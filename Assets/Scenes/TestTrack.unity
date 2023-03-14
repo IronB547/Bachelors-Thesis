@@ -4103,10 +4103,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: " W/A/S/D for driving and steering\n (You may use arrow keys as well)\n\nSpacebar
-    - handbrake (powerslide)\n Left shift - brakes (standard brakes)\n F1 - switch
-    camera positions\n F2 - turn on rear camera\n END - unstuck/turn over vehicle\nHOME
-    - restart race\n\n NOTE: FWD and RWD are \n experimental and may not work\ncorrectly."
+  m_text: " W/A/S/D for driving and steering\n (You may use arrow keys as well)\n\n
+    Spacebar - handbrake (powerslide)\n Left shift - brakes (standard brakes)\n F1
+    - switch camera positions\n F2 - turn on rear camera\n END - unstuck/turn over
+    vehicle\n HOME - return to checkpoint\n Insert - restart the game\n\n NOTE: FWD
+    and RWD are \n experimental and may not work\n correctly."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4133,8 +4134,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25
-  m_fontSizeBase: 25
+  m_fontSize: 23
+  m_fontSizeBase: 23
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -11252,7 +11253,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1853439350
 RectTransform:
   m_ObjectHideFlags: 0
