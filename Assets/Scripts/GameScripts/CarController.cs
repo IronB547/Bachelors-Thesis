@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Xml.Schema;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Quaternion = UnityEngine.Quaternion;
@@ -20,6 +21,7 @@ public class CarController : MonoBehaviour
 	public CarDriveType carDriveType = CarDriveType.FourWheelDrive;
 	[SerializeField] private GameObject[] WheelsObject = new GameObject[4];
 	[SerializeField] private WheelCollider[] WheelsCollider = new WheelCollider[4];
+	[SerializeField] private GameObject[] Checkpoints = new GameObject[4];
 
 	public GameObject SteeringWheel;
 	
@@ -33,10 +35,10 @@ public class CarController : MonoBehaviour
 	private float motor;
 	private bool carFlip = false;
 	private bool brakes = false;
-    private bool drift = false;
+	private bool drift = false;
 
-    // Start is called before the first frame update
-    void Start()
+	// Start is called before the first frame update
+	void Start()
 	{
 		
 		carFlip = false;
@@ -80,7 +82,7 @@ public class CarController : MonoBehaviour
 				maxSteeringAngle = 35;
 		}
 
-        motor = maxMotorTorque * Input.GetAxis("Vertical");
+		motor = maxMotorTorque * Input.GetAxis("Vertical");
 		float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
 		WheelHit wheelData;
 
@@ -198,8 +200,65 @@ public class CarController : MonoBehaviour
 			this.transform.rotation = Quaternion.Euler(carRotation);
 		}
 
-		// Reload the entire scene on Home button press
+		// Return the player to last checkpoint
 		if (Input.GetKeyDown(KeyCode.Home))
+		{
+			for(int i = 0; i < 4; i++)
+			{
+				if (Checkpoints[i].GetComponent<BoxCollider>().enabled == true) // search through all checkpoints which one is enabled
+				{
+					// Circular buffer through checkpoints
+					// Check the NEXT checkpoint (active checkpoint), if it is the FIRST checkpoint, go to the START/FINISH line
+					if (i == 0)
+						i = 3;
+					else // else go to the checkpoint you've last hit
+						i -= 1;
+
+					// Set new car position
+                    Vector3 carPosition = Checkpoints[i].transform.position;
+					carPosition.y -= 5; // Since the checkpoints are high, lower the falling distance
+
+                    this.transform.position = carPosition; // Set the position of the formula to the checkpoint
+
+					// Anulate the rotations as well
+                    Vector3 carRotation = this.transform.rotation.eulerAngles;
+                    carRotation.x = 0;
+                    carRotation.z = 0;
+
+					switch (i) // Set static rotations accordingly to hhe map
+                    {
+						case 0:
+							carRotation.y = 180;
+                            this.transform.rotation = Quaternion.Euler(carRotation);
+                            break;
+
+						case 1:
+                            carRotation.y = 19;
+                            this.transform.rotation = Quaternion.Euler(carRotation);
+                            break;
+
+						case 2:
+                            carRotation.y = 0;
+                            this.transform.rotation = Quaternion.Euler(carRotation);
+                            break;
+
+						case 3:
+                            carRotation.y = 270;
+                            this.transform.rotation = Quaternion.Euler(carRotation);
+                            break;
+					}
+
+					// Reset velocity and angular velocity
+					gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+					gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+					break; // stop looking for other checkpoints, we found it.
+				}
+			}
+		}
+
+		// Reload the entire scene on Insert button press
+		if(Input.GetKeyDown(KeyCode.Insert))
 		{
 			SceneManager.LoadScene("TestTrack");
 		}
@@ -207,9 +266,9 @@ public class CarController : MonoBehaviour
 		// Turn on handbreak when holding down spacebar
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-            drift = true;
+			drift = true;
 
-            for (int i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
 
@@ -219,12 +278,12 @@ public class CarController : MonoBehaviour
 				WheelsCollider[i].sidewaysFriction = curve;
 			}
 
-            for (int i = 2; i < 4; i++)
+			for (int i = 2; i < 4; i++)
 			{
 				WheelsCollider[i].brakeTorque = maxBrakeTorque / 3f;
 			}
 
-        }
+		}
 
 		// And turn it off
 		if (Input.GetKeyUp(KeyCode.Space))
@@ -236,9 +295,9 @@ public class CarController : MonoBehaviour
 				WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
 
 				curve.extremumSlip = 0.3f;
-                curve.extremumValue = 1f;
+				curve.extremumValue = 1f;
 
-                WheelsCollider[i].sidewaysFriction = curve;
+				WheelsCollider[i].sidewaysFriction = curve;
 			}
 
 			for (int i = 2; i < 4; i++)
@@ -246,34 +305,34 @@ public class CarController : MonoBehaviour
 				WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
 				
 				curve.extremumSlip = 0.2f;
-                curve.extremumValue = 1f;
+				curve.extremumValue = 1f;
 
-                WheelsCollider[i].sidewaysFriction = curve;
-                WheelsCollider[i].brakeTorque = 0f;
-            }
+				WheelsCollider[i].sidewaysFriction = curve;
+				WheelsCollider[i].brakeTorque = 0f;
+			}
 		}
 
 		if (Input.GetKeyDown(KeyCode.LeftShift))
 		{
-            brakes = true;
+			brakes = true;
 
-            for (int i = 2; i < 4; i++)
+			for (int i = 2; i < 4; i++)
 			{
 				WheelsCollider[i].brakeTorque = maxBrakeTorque;
 			}
 
-        }
+		}
 
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            brakes = false;
+		if (Input.GetKeyUp(KeyCode.LeftShift))
+		{
+			brakes = false;
 
-            for (int i = 2; i < 4; i++)
-            {
-                WheelsCollider[i].brakeTorque = 0f;
-            }
+			for (int i = 2; i < 4; i++)
+			{
+				WheelsCollider[i].brakeTorque = 0f;
+			}
 
-        }
+		}
 
-    }
+	}
 }

@@ -4105,9 +4105,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: " W/A/S/D for driving and steering\n (You may use arrow keys as well)\n\nSpacebar
     - handbrake (powerslide)\n Left shift - brakes (standard brakes)\n F1 - switch
-    camera positions\n F2 - turn on rear camera\n END - unstuck/turn over vehicle\n
-    HOME - restart race\n\n NOTE: FWD and RWD are \n experimental and may not work\n
-    correctly."
+    camera positions\n F2 - turn on rear camera\n END - unstuck/turn over vehicle\nHOME
+    - restart race\n\n NOTE: FWD and RWD are \n experimental and may not work\ncorrectly."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4246,7 +4245,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 831251426}
   m_LocalRotation: {x: 0, y: -0.24978858, z: 0, w: 0.9683004}
-  m_LocalPosition: {x: 487.8, y: 7.5999994, z: 77}
+  m_LocalPosition: {x: 487.8, y: 5.2, z: 77}
   m_LocalScale: {x: 1, y: 30.630703, z: 187.23227}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6954,7 +6953,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1193904727}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 625.99, y: 16.2, z: 829.025}
+  m_LocalPosition: {x: 625.99, y: 5.4, z: 829.025}
   m_LocalScale: {x: 1, y: 37.291935, z: 129.83868}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8589,7 +8588,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1529948632}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.48, y: 7.82, z: -14.5}
+  m_LocalPosition: {x: -0.48, y: 4.95, z: -14.5}
   m_LocalScale: {x: 25.25527, y: 18.75816, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11738,6 +11737,11 @@ MonoBehaviour:
   - {fileID: 1542736144}
   - {fileID: 1038374907}
   - {fileID: 1000617484}
+  Checkpoints:
+  - {fileID: 1529948632}
+  - {fileID: 831251426}
+  - {fileID: 2029661968}
+  - {fileID: 1193904727}
   SteeringWheel: {fileID: 1276034638}
   maxMotorTorque: 405
   maxSteeringAngle: 30
@@ -13116,7 +13120,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2029661968}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 856.9, y: 15.6866, z: 161.3}
+  m_LocalPosition: {x: 856.9, y: 5.1, z: 161.3}
   m_LocalScale: {x: 150.68617, y: 41.12185, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
