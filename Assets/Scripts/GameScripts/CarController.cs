@@ -176,8 +176,7 @@ public class CarController : MonoBehaviour
 		// then insert the value of rotation, in this case that's the player steering to the left or right,
 		// times 100 for percentage of rotational value, times the dampening rate and maximum turning angle.
 		SteeringWheel.transform.localEulerAngles = Vector3.back * Mathf.Clamp((Input.GetAxis("Horizontal") * 100) * steerRotationDamp, -maxTurnAngle, maxTurnAngle);
-
-	}
+    }
 
 	void Update()
 	{

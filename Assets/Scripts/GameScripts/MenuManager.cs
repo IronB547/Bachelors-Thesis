@@ -13,17 +13,17 @@ public class MenuManager : MonoBehaviour
 	public GameObject gameMenu;
 	public GameObject formula;
 	public GameObject controls;
-    public GameObject soundManager;
-    public GameObject FlipHelperPoint;
-    public GameObject FlipPanel;
-    public TerrainCollider terrainColl;
+	public GameObject soundManager;
+	public GameObject FlipHelperPoint;
+	public GameObject FlipPanel;
+	public TerrainCollider terrainColl;
 
-    public TMP_Dropdown dropdown;
-    public TextMeshProUGUI speedNumber;
+	public TMP_Dropdown dropdown;
+	public TextMeshProUGUI speedNumber;
 	public TextMeshProUGUI GearNumber;
 
-    private Ray flipRay;
-    private bool showControls;
+	private Ray flipRay;
+	private bool showControls;
 	private float flipTimer = 0;
 	private bool hitTerrain;
 
@@ -48,13 +48,13 @@ public class MenuManager : MonoBehaviour
 		gameMenu.SetActive(false);
 		action.Pause.PauseGame.performed += _ => DeterminePause();
 		controls.SetActive(false);
-        GearNumber.text = soundManager.GetComponent<SoundManager>().transmission.ToString();
+		GearNumber.text = soundManager.GetComponent<SoundManager>().transmission.ToString();
 		hitTerrain = false;
-        FlipPanel.SetActive(false);
+		FlipPanel.SetActive(false);
 
-        // The dropdown list color would require way more time and there are way more important matters than this
-        // maybe I will fix the color scheme later
-        dropdown.SetValueWithoutNotify(2);
+		// The dropdown list color would require way more time and there are way more important matters than this
+		// maybe I will fix the color scheme later
+		dropdown.SetValueWithoutNotify(2);
 		dropdown.onValueChanged.AddListener(delegate { SelectedItem(dropdown); });
 	}
 
@@ -148,10 +148,10 @@ public class MenuManager : MonoBehaviour
 		}
 
 
-        RaycastHit hit;
+		RaycastHit hit;
 		flipRay = new Ray(formula.transform.position, FlipHelperPoint.transform.position - formula.transform.position);
 
-        if (terrainColl.Raycast(flipRay, out hit, 5f))
+		if (terrainColl.Raycast(flipRay, out hit, 5f))
 		{
 			hitTerrain = true;
 		}
@@ -161,14 +161,13 @@ public class MenuManager : MonoBehaviour
 
 		flipTimer += Time.deltaTime;
 		hitTerrain = false;
-        FlipPanel.SetActive(false);
+		FlipPanel.SetActive(false);
 
-        if (flipTimer > 3f && formula.GetComponent<CarController>().formulaSpeed < 4)
+		if (flipTimer > 3f && formula.GetComponent<CarController>().formulaSpeed < 4)
 		{
 			FlipPanel.SetActive(true);
-			//Debug.Log("I have been flipped for longer than three seconds");
 		}
 
-        Debug.DrawRay(formula.transform.position, FlipHelperPoint.transform.position - formula.transform.position, Color.cyan);
-    }
+		//Debug.DrawRay(formula.transform.position + new Vector3(0,0.8f,0), FlipHelperPoint.transform.position - formula.transform.position, Color.cyan);
+	}
 }

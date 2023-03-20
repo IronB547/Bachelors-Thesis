@@ -2014,7 +2014,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 729e1992eed3f2b4283719c4a3a83b86, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 105
+      value: 115
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 729e1992eed3f2b4283719c4a3a83b86, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4103,11 +4103,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: " W/A/S/D for driving and steering\n (You may use arrow keys as well)\n\n
-    Spacebar - handbrake (powerslide)\n Left shift - brakes (standard brakes)\n F1
-    - switch camera positions\n F2 - turn on rear camera\n END - unstuck/turn over
-    vehicle\n HOME - return to checkpoint\n Insert - restart the game\n\n NOTE: FWD
-    and RWD are \n experimental and may not work\n correctly."
+  m_text: " W/A/S/D for driving and steering\n (You may use arrow keys as well)\n\nSpacebar
+    - handbrake (powerslide)\n Left shift - brakes (standard brakes)\n F1 - switch
+    camera positions\n F2 - turn on rear camera\n END - unstuck/turn over vehicle\n
+    HOME - return to checkpoint\n Insert - restart the game\n\n NOTE: FWD and RWD
+    are \n experimental and may not work\n correctly."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4956,8 +4956,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0, y: 0.9961947, z: -0.08715578, w: 0}
-  m_LocalPosition: {x: 28, y: 3, z: 119}
+  m_LocalRotation: {x: 0, y: 0.9961947, z: -0.08715578, w: 0}
+  m_LocalPosition: {x: 28, y: 3, z: 124}
   m_LocalScale: {x: 1, y: 0.99999994, z: 1.0000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5021,9 +5021,9 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 1.6180693
-      value: 10.003479
-      inSlope: 5.9674683
-      outSlope: 5.9674683
+      value: 10
+      inSlope: 5.9690647
+      outSlope: 5.9690647
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -5062,10 +5062,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 1
+      time: 1.6
       value: 10
-      inSlope: 12.554505
-      outSlope: 12.554505
+      inSlope: 17.553843
+      outSlope: 17.553843
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
