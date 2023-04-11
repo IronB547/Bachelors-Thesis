@@ -54,9 +54,13 @@ public class LapTriggerLogic : MonoBehaviour
 			{
 				Clock.GetComponent<ClockManager>().enabled = false;
 				FinishPanel.SetActive(true);
-				//collided.transform.parent.gameObject.transform.parent.GetComponent<CarUserControl>().enabled = false; // If a car has reached the finish line, terminate user control.
 			}
 		}
 
 	}
+
+	public void HideFinishPanel()
+	{
+        FinishPanel.SetActive(false);
+    }
 }

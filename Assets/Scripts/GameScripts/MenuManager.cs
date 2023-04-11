@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -16,7 +17,11 @@ public class MenuManager : MonoBehaviour
 	public GameObject soundManager;
 	public GameObject FlipHelperPoint;
 	public GameObject FlipPanel;
+	public GameObject BGM;
 	public TerrainCollider terrainColl;
+
+	public Slider VolumeSlider;
+	public TextMeshProUGUI VolumeNum;
 
 	public TMP_Dropdown dropdown;
 	public TextMeshProUGUI speedNumber;
@@ -26,6 +31,7 @@ public class MenuManager : MonoBehaviour
 	private bool showControls;
 	private float flipTimer = 0;
 	private bool hitTerrain;
+	private float volume = 0.7f;
 
 	// Handles pausing and 
 	private void Awake()
@@ -52,9 +58,11 @@ public class MenuManager : MonoBehaviour
 		hitTerrain = false;
 		FlipPanel.SetActive(false);
 
-		// The dropdown list color would require way more time and there are way more important matters than this
-		// maybe I will fix the color scheme later
-		dropdown.SetValueWithoutNotify(2);
+        VolumeSlider.onValueChanged.AddListener((value) => { VolumeNum.text = value.ToString("0.0"); });
+
+        // The dropdown list color would require way more time and there are way more important matters than this
+        // maybe I will fix the color scheme later
+        dropdown.SetValueWithoutNotify(2);
 		dropdown.onValueChanged.AddListener(delegate { SelectedItem(dropdown); });
 	}
 
@@ -129,8 +137,11 @@ public class MenuManager : MonoBehaviour
 			
 	}
 
-	void FixedUpdate()
+    void FixedUpdate()
 	{
+
+		BGM.GetComponent<AudioSource>().volume = float.Parse(VolumeNum.text);
+
 		if (formula.GetComponent<CarController>().formulaSpeed > -0.1f && formula.GetComponent<CarController>().formulaSpeed < 0.1f)
 		{
 			speedNumber.text = (formula.GetComponent<CarController>().formulaSpeed).ToString("0.00");
