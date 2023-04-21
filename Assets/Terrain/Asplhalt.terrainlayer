@@ -8,9 +8,9 @@ TerrainLayer:
   m_PrefabAsset: {fileID: 0}
   m_Name: Asplhalt
   m_DiffuseTexture: {fileID: 2800000, guid: 25c1a1dcdd760b447bf195760aa786fb, type: 3}
-  m_NormalMapTexture: {fileID: 2800000, guid: 2cbef2baf7777474ea2ea6525a3729b2, type: 3}
-  m_MaskMapTexture: {fileID: 0}
-  m_TileSize: {x: 5, y: 5}
+  m_NormalMapTexture: {fileID: 2800000, guid: 0984487e1db60b049b402414ee32931b, type: 3}
+  m_MaskMapTexture: {fileID: 2800000, guid: e5ee6669972841049abdcef9ffd52005, type: 3}
+  m_TileSize: {x: 3, y: 3}
   m_TileOffset: {x: 0, y: 0}
   m_Specular: {r: 0, g: 0, b: 0, a: 0}
   m_Metallic: 0
@@ -19,4 +19,4 @@ TerrainLayer:
   m_DiffuseRemapMin: {x: 0, y: 0, z: 0, w: 0}
   m_DiffuseRemapMax: {x: 1, y: 1, z: 1, w: 1}
   m_MaskMapRemapMin: {x: 0, y: 0, z: 0, w: 0}
-  m_MaskMapRemapMax: {x: 1, y: 1, z: 1, w: 1}
+  m_MaskMapRemapMax: {x: 1, y: 1, z: 1, w: -1}

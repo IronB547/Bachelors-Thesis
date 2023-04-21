@@ -31,7 +31,6 @@ public class MenuManager : MonoBehaviour
 	private bool showControls;
 	private float flipTimer = 0;
 	private bool hitTerrain;
-	private float volume = 0.7f;
 
 	// Handles pausing and 
 	private void Awake()
@@ -162,7 +161,7 @@ public class MenuManager : MonoBehaviour
 		RaycastHit hit;
 		flipRay = new Ray(formula.transform.position, FlipHelperPoint.transform.position - formula.transform.position);
 
-		if (terrainColl.Raycast(flipRay, out hit, 5f))
+		if (terrainColl.Raycast(flipRay, out hit, 25f))
 		{
 			hitTerrain = true;
 		}
@@ -179,6 +178,6 @@ public class MenuManager : MonoBehaviour
 			FlipPanel.SetActive(true);
 		}
 
-		//Debug.DrawRay(formula.transform.position + new Vector3(0,0.8f,0), FlipHelperPoint.transform.position - formula.transform.position, Color.cyan);
+		Debug.DrawRay(formula.transform.position + new Vector3(0,0.8f,0), FlipHelperPoint.transform.position - formula.transform.position, Color.cyan);
 	}
 }

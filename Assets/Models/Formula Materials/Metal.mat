@@ -27,6 +27,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: 6e4ae4064600d784cac1e41a9e6f2e59, type: 3}
   m_ValidKeywords:
   - _DISABLE_SSR_TRANSPARENT
+  - _MASKMAP
   - _NORMALMAP
   - _NORMALMAP_TANGENT_SPACE
   m_InvalidKeywords: []
@@ -109,7 +110,7 @@ Material:
         m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - _MaskMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 8ec27e5dda1f8e6489029acf471cb980, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -117,7 +118,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: b839cf13aa2affd41a02ed99e7ee1458, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2e3a0372491433c49b6f8e3803652540, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMapOS:
@@ -232,7 +233,7 @@ Material:
     - _LinkDetailsWithBase: 1
     - _MaterialID: 1
     - _Metallic: 1
-    - _MetallicRemapMax: 1
+    - _MetallicRemapMax: 0.8420845
     - _MetallicRemapMin: 0
     - _Mode: 0
     - _NormalMapSpace: 0
@@ -250,7 +251,7 @@ Material:
     - _ReceivesSSRTransparent: 0
     - _RefractionModel: 0
     - _Smoothness: 0.9
-    - _SmoothnessRemapMax: 1
+    - _SmoothnessRemapMax: 0.9170944
     - _SmoothnessRemapMin: 0
     - _SmoothnessTextureChannel: 1
     - _SpecularAAScreenSpaceVariance: 0.1

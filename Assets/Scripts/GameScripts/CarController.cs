@@ -30,12 +30,16 @@ public class CarController : MonoBehaviour
 	public float maxBrakeTorque = 1000;
 	public float totalWheelRPM;
 	public float formulaSpeed;
+
 	private float maxTurnAngle = 45f;
 	private float steerRotationDamp = 0.5f;
 	private float motor;
+	private float elapsedTime;
+
 	private bool carFlip = false;
 	private bool brakes = false;
 	private bool drift = false;
+	private bool driftDelay = false;
 
 	// Start is called before the first frame update
 	void Start()
@@ -50,8 +54,8 @@ public class CarController : MonoBehaviour
 	void FixedUpdate()
 	{
 
-		// Compute wheel RPM to determine if the vehicle is going backwards.
-		totalWheelRPM = WheelsCollider[0].rpm + WheelsCollider[1].rpm + WheelsCollider[2].rpm + WheelsCollider[3].rpm;
+        // Compute wheel RPM to determine if the vehicle is going backwards.
+        totalWheelRPM = WheelsCollider[0].rpm + WheelsCollider[1].rpm + WheelsCollider[2].rpm + WheelsCollider[3].rpm;
 
 		// Compute the total speed of the vehicle
 		formulaSpeed = gameObject.GetComponent<Rigidbody>().velocity.magnitude * 3.6f;
@@ -176,12 +180,61 @@ public class CarController : MonoBehaviour
 		// then insert the value of rotation, in this case that's the player steering to the left or right,
 		// times 100 for percentage of rotational value, times the dampening rate and maximum turning angle.
 		SteeringWheel.transform.localEulerAngles = Vector3.back * Mathf.Clamp((Input.GetAxis("Horizontal") * 100) * steerRotationDamp, -maxTurnAngle, maxTurnAngle);
-    }
+
+
+		if (drift == false && driftDelay == false) // If not drifting, change stiffness at high speeds. This is necessary because the vehicle will oscilate otherwise.
+		{
+			if(formulaSpeed > 105f)
+			{
+				for (int i = 0; i < 2; i++) // FrontWheels stats 
+				{
+					WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
+
+					curve.stiffness = 1.8f;
+
+					WheelsCollider[i].sidewaysFriction = curve;
+
+				}
+
+				for (int i = 2; i < 4; i++) // RearWheels  stats 
+				{
+					WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
+
+					curve.stiffness = 4f;
+
+					WheelsCollider[i].sidewaysFriction = curve;
+
+				}
+			}
+			else
+			{
+                for (int i = 0; i < 2; i++) // FrontWheels stats 
+                {
+                    WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
+
+                    curve.stiffness = 1.2f;
+
+                    WheelsCollider[i].sidewaysFriction = curve;
+
+                }
+
+                for (int i = 2; i < 4; i++) // RearWheels stats 
+                {
+                    WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
+
+                    curve.stiffness = 2f;
+
+                    WheelsCollider[i].sidewaysFriction = curve;
+
+                }
+            }
+		}
+	}
 
 	void Update()
 	{
 		// Flip the car on pressing END key
-		if (Input.GetKeyDown(KeyCode.End) && !carFlip)
+		if (Input.GetKeyDown(KeyCode.I) && !carFlip)
 		{
 			carFlip = true;
 			Vector3 carRotation = this.transform.rotation.eulerAngles;
@@ -200,7 +253,7 @@ public class CarController : MonoBehaviour
 		}
 
 		// Return the player to last checkpoint
-		if (Input.GetKeyDown(KeyCode.Home))
+		if (Input.GetKeyDown(KeyCode.O))
 		{
 			for(int i = 0; i < 4; i++)
 			{
@@ -214,37 +267,40 @@ public class CarController : MonoBehaviour
 						i -= 1;
 
 					// Set new car position
-                    Vector3 carPosition = Checkpoints[i].transform.position;
+					Vector3 carPosition = Checkpoints[i].transform.position;
 					carPosition.y -= 5; // Since the checkpoints are high, lower the falling distance
 
-                    this.transform.position = carPosition; // Set the position of the formula to the checkpoint
+					this.transform.position = carPosition; // Set the position of the formula to the checkpoint
 
 					// Anulate the rotations as well
-                    Vector3 carRotation = this.transform.rotation.eulerAngles;
-                    carRotation.x = 0;
-                    carRotation.z = 0;
+					Vector3 carRotation = this.transform.rotation.eulerAngles;
+					carRotation.x = 0;
+					carRotation.z = 0;
 
 					switch (i) // Set static rotations accordingly to hhe map
-                    {
+					{
 						case 0:
 							carRotation.y = 180;
-                            this.transform.rotation = Quaternion.Euler(carRotation);
-                            break;
+							this.transform.rotation = Quaternion.Euler(carRotation);
+							break;
 
 						case 1:
-                            carRotation.y = 19;
-                            this.transform.rotation = Quaternion.Euler(carRotation);
-                            break;
+							carRotation.y = 19;
+							this.transform.rotation = Quaternion.Euler(carRotation);
+							break;
 
 						case 2:
-                            carRotation.y = 0;
-                            this.transform.rotation = Quaternion.Euler(carRotation);
-                            break;
+							carPosition.y += 2;
+							carPosition.x -= 14;
+							this.transform.position = carPosition;
+							carRotation.y = 0;
+							this.transform.rotation = Quaternion.Euler(carRotation);
+							break;
 
 						case 3:
-                            carRotation.y = 270;
-                            this.transform.rotation = Quaternion.Euler(carRotation);
-                            break;
+							carRotation.y = 270;
+							this.transform.rotation = Quaternion.Euler(carRotation);
+							break;
 					}
 
 					// Reset velocity and angular velocity
@@ -257,7 +313,7 @@ public class CarController : MonoBehaviour
 		}
 
 		// Reload the entire scene on Insert button press
-		if(Input.GetKeyDown(KeyCode.Insert))
+		if(Input.GetKeyDown(KeyCode.P))
 		{
 			SceneManager.LoadScene("TestTrack");
 		}
@@ -266,52 +322,61 @@ public class CarController : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			drift = true;
+			driftDelay = false;
+			elapsedTime = 0;
 
-			for (int i = 0; i < 4; i++)
+			for (int i = 2; i < 4; i++) // RearWheels HOLD stats 
 			{
 				WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
+				WheelFrictionCurve Fcurve = WheelsCollider[i].forwardFriction;
 
-				curve.extremumSlip = 4f;
-				curve.extremumValue = 2f;
+				curve.stiffness = 1f;
+				Fcurve.stiffness = 1f;
 
 				WheelsCollider[i].sidewaysFriction = curve;
+				WheelsCollider[i].forwardFriction = Fcurve;
+
 			}
 
 			for (int i = 2; i < 4; i++)
 			{
-				WheelsCollider[i].brakeTorque = maxBrakeTorque / 3f;
+				WheelsCollider[i].brakeTorque = maxBrakeTorque / 1.5f;
 			}
 
 		}
+
+		if(driftDelay == true) // Delay the stiffness of car for two seconds
+		{
+            elapsedTime += Time.deltaTime;
+        }
+
+		if(elapsedTime > 2)
+		{
+			driftDelay = false;
+		}
+
 
 		// And turn it off
 		if (Input.GetKeyUp(KeyCode.Space))
 		{
 			drift = false;
+			driftDelay = true;
 
-			for(int i = 0; i < 2; i++)
+			for (int i = 2; i < 4; i++) // RearWheel RELEASE stats
 			{
 				WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
+				WheelFrictionCurve Fcurve = WheelsCollider[i].forwardFriction;
 
-				curve.extremumSlip = 0.3f;
-				curve.extremumValue = 1f;
-
-				WheelsCollider[i].sidewaysFriction = curve;
-			}
-
-			for (int i = 2; i < 4; i++)
-			{
-				WheelFrictionCurve curve = WheelsCollider[i].sidewaysFriction;
-				
-				curve.extremumSlip = 0.2f;
-				curve.extremumValue = 1f;
+				curve.stiffness = 2f;
+				Fcurve.stiffness = 1f;
 
 				WheelsCollider[i].sidewaysFriction = curve;
+				WheelsCollider[i].forwardFriction = Fcurve;
 				WheelsCollider[i].brakeTorque = 0f;
 			}
 		}
 
-		if (Input.GetKeyDown(KeyCode.LeftShift))
+		if (Input.GetKeyDown(KeyCode.LeftAlt))
 		{
 			brakes = true;
 
@@ -322,7 +387,7 @@ public class CarController : MonoBehaviour
 
 		}
 
-		if (Input.GetKeyUp(KeyCode.LeftShift))
+		if (Input.GetKeyUp(KeyCode.LeftAlt))
 		{
 			brakes = false;
 

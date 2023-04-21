@@ -8,8 +8,8 @@ TerrainLayer:
   m_PrefabAsset: {fileID: 0}
   m_Name: SnowRocks
   m_DiffuseTexture: {fileID: 2800000, guid: 1ede92ee28e96db44991f9f60766dd12, type: 3}
-  m_NormalMapTexture: {fileID: 2800000, guid: 8ac98be58a882964093b35bcff9d5ceb, type: 3}
-  m_MaskMapTexture: {fileID: 0}
+  m_NormalMapTexture: {fileID: 2800000, guid: c4b8dadabd6715b49b324ad88839576a, type: 3}
+  m_MaskMapTexture: {fileID: 2800000, guid: ff2496ce9c2e4884099197edc58c04ad, type: 3}
   m_TileSize: {x: 2, y: 2}
   m_TileOffset: {x: 0, y: 0}
   m_Specular: {r: 0, g: 0, b: 0, a: 0}
@@ -19,4 +19,4 @@ TerrainLayer:
   m_DiffuseRemapMin: {x: 0, y: 0, z: 0, w: 0}
   m_DiffuseRemapMax: {x: 1, y: 1, z: 1, w: 1}
   m_MaskMapRemapMin: {x: 0, y: 0, z: 0, w: 0}
-  m_MaskMapRemapMax: {x: 1, y: 1, z: 1, w: 1}
+  m_MaskMapRemapMax: {x: 1, y: 1, z: 1, w: -1}

@@ -16,7 +16,7 @@ public class ClockManager : MonoBehaviour
     public TextMeshProUGUI HundredthsBox;
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         HundredthsCount += Time.deltaTime * 100;
 

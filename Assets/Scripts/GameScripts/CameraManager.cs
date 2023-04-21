@@ -24,8 +24,9 @@ public class CameraManager : MonoBehaviour
 
 	public AnimationCurve cameraSmoothMoveCurve;
 	public AnimationCurve paramStep;
+    public AnimationCurve FOVRaise;
 
-	public float parameter = 0.175f;
+    public float parameter = 0.175f;
 
 	private float smoothCamMove = 0.05f;
 	public int switchCam = 0;
@@ -61,7 +62,12 @@ public class CameraManager : MonoBehaviour
 		camRay = new Ray(targetObject.position, (mainCam.transform.position - (targetObject.position  + new Vector3(0, 1f, -1f))));
 		TPLowerRay = new Ray(mainCam.transform.position - new Vector3(0, 0.5f, -0.5f), mainCam.transform.position - targetObject.transform.position + new Vector3(0f, -10f, 0f));
 		//TPCloseLowerRay = new Ray(mainCam.transform.position - new Vector3(0, 0.5f, -0.5f), (cameraHelperPointClose.position - mainCam.transform.position));
-	}
+
+		if (Formula.GetComponent<CarController>().totalWheelRPM > 0)
+			mainCam.fieldOfView = FOVRaise.Evaluate(Formula.GetComponent<CarController>().formulaSpeed);
+		else
+			mainCam.fieldOfView = 65;
+    }
 
 	// Update is called once per frame
 	void Update()
